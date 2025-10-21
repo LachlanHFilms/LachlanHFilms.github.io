@@ -1,242 +1,336 @@
-// Lachlan Hitchcock Film — Single-file React app (Tailwind CSS)
-// ----------------------------------------------------------------
-// How to use:
-// 1) Create a new Vite React app (recommended):
-//    npm create vite@latest lachlan-site -- --template react
-//    cd lachlan-site
-// 2) Install Tailwind (follow Tailwind + Vite instructions):
-//    npm install -D tailwindcss postcss autoprefixer && npx tailwindcss init -p
-//    // tailwind.config.cjs -> content: ['./index.html','./src/**/*.{js,jsx,ts,tsx}']
-//    // ./src/index.css -> add @tailwind base; @tailwind components; @tailwind utilities;
-// 3) Replace src/App.jsx with the contents of this file and add the assets folder.
-// 4) Run: npm install && npm run dev
-// 5) To deploy to GitHub Pages, see the README section at the bottom of this file.
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lachlan Hitchcock Film</title>
+  <meta name="description" content="Lachlan Hitchcock — filmmaker. Selected short films: Silent Fields, Paper Shoes. Contact for collaborations & festival submissions." />
 
-import React from 'react';
+  <!-- Simple, clean styles — cinematic dark theme -->
+  <style>
+    :root{
+      --bg:#050509;
+      --panel:#0e1014;
+      --muted:#9aa0a6;
+      --accent:#e6e7e8;
+      --red:#e03b3b;
+      --glass: rgba(255,255,255,0.04);
+      --radius:12px;
+      --maxw:1100px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background: linear-gradient(180deg,#020204 0%, #0b0f14 50%, #0b1220 100%);
+      color:var(--accent);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+    }
+    .wrap{max-width:var(--maxw);margin:0 auto;padding:28px;}
+    header.site-header{position:sticky;top:0;background:linear-gradient(180deg, rgba(2,4,6,0.85), rgba(2,4,6,0.5));backdrop-filter:blur(6px);z-index:40;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
+    .brand{display:flex;align-items:center;gap:14px}
+    .avatar{
+      width:56px;height:56px;border-radius:10px;overflow:hidden;background:linear-gradient(180deg,#061021,#091726);display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.06)
+    }
+    .avatar svg{width:100%;height:100%}
+    .brand h1{font-size:18px;margin:0;color:#fff}
+    .brand p{margin:0;font-size:12px;color:var(--muted)}
+    nav.main-nav{margin-left:auto}
+    nav.main-nav a{color:var(--muted);text-decoration:none;margin-left:18px;font-size:14px}
+    nav.main-nav a:hover{color:var(--accent)}
+    .hero{
+      margin-top:20px;
+      border-radius:16px;
+      overflow:hidden;
+      position:relative;
+      background:linear-gradient(90deg, rgba(3,5,8,0.6), rgba(7,10,15,0.6)), url('') center/cover no-repeat;
+      min-height:320px;
+      display:flex;
+      align-items:center;
+    }
+    /* YouTube banner safe area note:
+       YouTube recommends designing the banner at 2560x1440px.
+       The "safe area" (visible on all devices) is 1546x423 centered.
+       Keep text/logo inside that central area.
+    */
+    .hero-inner{display:flex;gap:24px;align-items:center;padding:36px;max-width:var(--maxw);margin:0 auto;width:100%}
+    .hero .pf{
+      width:160px;height:160px;border-radius:12px;overflow:hidden;background:#071022;border:1px solid rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center
+    }
+    .hero h2{font-size:30px;margin:0;color:#fff}
+    .hero p{color:var(--muted);max-width:720px;margin-top:8px}
+    .btn{display:inline-block;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:600}
+    .btn-cta{background:#fff;color:#000}
+    .btn-ghost{border:1px solid rgba(255,255,255,0.06);color:var(--accent;background:transparent)}
+    .grid{display:grid;gap:18px}
+    .projects{margin-top:28px}
+    .card{
+      background:var(--panel);
+      border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03);
+      display:flex;gap:14px;align-items:flex-start;
+    }
+    .card .poster{width:170px;height:100px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#061018;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.04)}
+    .card h3{margin:0;font-size:18px}
+    .meta{font-size:13px;color:var(--muted);margin-top:6px}
+    .card .desc{color:var(--muted);margin-top:8px}
+    .card .actions{margin-top:12px;display:flex;gap:10px;align-items:center}
+    .badge{font-size:12px;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.02)}
+    /* About / Contact */
+    section {padding:36px 0;border-top:1px solid rgba(255,255,255,0.02)}
+    h2.section-title{font-size:20px;margin:0 0 12px 0;color:#fff}
+    .about-grid{display:grid;grid-template-columns:1fr 300px;gap:20px}
+    .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+    .contact form input,.contact form textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--accent);resize:vertical}
+    footer{padding:18px 0;text-align:center;color:var(--muted);font-size:13px;border-top:1px solid rgba(255,255,255,0.02);margin-top:28px}
+    /* Modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:80;padding:18px}
+    .modal{width:100%;max-width:980px;background:#000;border-radius:10px;overflow:hidden}
+    .modal .frame{position:relative;padding-top:56.25%}
+    .modal iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+    .modal-close{position:absolute;right:8px;top:8px;background:rgba(255,255,255,0.08);border-radius:6px;padding:6px;border:0;color:#fff;cursor:pointer}
+    /* Responsive */
+    @media (max-width:900px){
+      .hero-inner{flex-direction:column;align-items:flex-start;padding:20px}
+      .hero .pf{width:120px;height:120px}
+      .about-grid{grid-template-columns:1fr}
+      .card{flex-direction:column}
+      .card .poster{width:100%;height:170px}
+      nav.main-nav{display:none}
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="wrap" style="display:flex;align-items:center;">
+      <div class="brand" style="gap:12px">
+        <div class="avatar" aria-hidden="true">
+          <!-- Simple LH placeholder: replace with your avatar image (square) -->
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="#071022"/>
+            <text x="50%" y="54%" font-size="72" text-anchor="middle" fill="#e6e7e8" font-family="sans-serif" dy=".3em">LH</text>
+          </svg>
+        </div>
+        <div>
+          <h1>Lachlan Hitchcock Film</h1>
+          <p>Writer • Director • Editor</p>
+        </div>
+      </div>
 
-// ---------- Sample data (edit with your real project info) ----------
-const PROJECTS = [
-  {
-    id: 'silent-fields',
-    title: 'Silent Fields',
-    year: 2025,
-    runtime: '16 min',
-    poster: '/assets/silent-fields.jpg',
-    synopsis:
-      'A German deserter in World War II deserts because he is afraid to fight and faces the consequences as he finds himself next in line to be executed.',
-    trailer: 'https://www.youtube.com/watch?v=REPLACE_WITH_ID'
-  },
-  {
-    id: 'paper-shoes',
-    title: 'Paper Shoes',
-    year: 2024,
-    runtime: '12 min',
-    poster: '/assets/paper-shoes.jpg',
-    synopsis:
-      'A teenage boy struggling with depression navigates fragile steps toward a faint light at the end of a long path.',
-    trailer: 'https://www.youtube.com/watch?v=REPLACE_WITH_ID'
-  }
-];
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="#projects">Projects</a>
+        <a href="#about">About</a>
+        <a href="#press">Press</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-// ----------------- Small utility components -----------------
-const Container = ({ children }) => (
-  <div className="max-w-6xl mx-auto px-6 py-12">{children}</div>
-);
-
-const Header = () => (
-  <header className="bg-black/80 backdrop-blur sticky top-0 z-40">
-    <Container>
-      <div className="flex items-center justify-between py-4">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 flex items-center justify-center rounded-full overflow-hidden bg-gray-800">
-            {/* Avatar placeholder (replace with your image) */}
-            <svg viewBox="0 0 256 256" className="w-full h-full">
-              <rect width="256" height="256" fill="#0f172a" />
-              <text x="50%" y="55%" dominantBaseline="middle" textAnchor="middle" fontSize="72" fill="#e6e7e8">LH</text>
-            </svg>
-          </div>
-          <div>
-            <h1 className="text-white font-semibold">Lachlan Hitchcock Film</h1>
-            <p className="text-sm text-gray-300">Writer | Director | Editor</p>
-          </div>
+  <!-- Hero / YouTube banner area -->
+  <main>
+    <div class="hero" role="banner" aria-label="YouTube banner preview">
+      <div class="hero-inner">
+        <div class="pf" aria-hidden="true">
+          <!-- square profile: replace this SVG with your avatar image (800x800 recommended) -->
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="#061021"/>
+            <text x="50%" y="54%" font-size="64" text-anchor="middle" fill="#e6e7e8" font-family="sans-serif" dy=".3em">LH</text>
+          </svg>
         </div>
 
-        <nav>
-          <ul className="flex gap-6 text-gray-200">
-            <li><a href="#projects" className="hover:text-white">Projects</a></li>
-            <li><a href="#about" className="hover:text-white">About</a></li>
-            <li><a href="#press" className="hover:text-white">Press</a></li>
-            <li><a href="#contact" className="hover:text-white">Contact</a></li>
-          </ul>
-        </nav>
-      </div>
-    </Container>
-  </header>
-);
+        <div>
+          <h2>Lachlan Hitchcock</h2>
+          <p>Filmmaker — intimate, character-led short films exploring fear, identity and fragile courage. Selected shorts, festival submissions, and collaborations.</p>
 
-const YouTubeBanner = () => (
-  <section className="relative">
-    {/* Banner area sized for YouTube: background will crop responsively; ensure main content stays inside safe area (1546 x 423 centered in 2560 x 1440). */}
-    <div className="h-64 md:h-96 bg-gradient-to-r from-gray-900 via-slate-800 to-black flex items-center">
-      <Container>
-        <div className="flex items-center gap-6">
-          <div className="w-40 h-40 md:w-56 md:h-56 rounded-lg overflow-hidden shadow-2xl border border-white/10">
-            {/* Replace this SVG with your profile image (square). Recommended size: 800x800. */}
-            <svg viewBox="0 0 200 200" className="w-full h-full">
-              <rect width="200" height="200" fill="#0b1220" />
-              <text x="50%" y="55%" dominantBaseline="middle" textAnchor="middle" fontSize="56" fill="#e6e7e8">LH</text>
+          <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+            <a class="btn btn-cta" href="#projects">View Projects</a>
+            <a class="btn" href="https://www.youtube.com/" target="_blank" rel="noreferrer">YouTube Channel</a>
+            <a class="btn" href="#contact" style="background:transparent;border:1px solid rgba(255,255,255,0.06;color:var(--accent)">Contact</a>
+          </div>
+
+          <div style="margin-top:12px;color:var(--muted);font-size:13px">
+            Pro tip: when exporting a YouTube banner use 2560×1440px and keep logos & text inside the center 1546×423 safe area.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projects -->
+    <section id="projects" class="wrap projects">
+      <h2 class="section-title">Selected Projects</h2>
+
+      <div class="grid">
+        <!-- Project 1 -->
+        <article class="card" aria-labelledby="p-silent-fields">
+          <div class="poster" aria-hidden="true">
+            <!-- Poster placeholder: replace with actual poster image -->
+            <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+              <rect width="100%" height="100%" fill="#0b1220"/>
+              <text x="50%" y="50%" text-anchor="middle" font-size="20" fill="#9aa0a6">Silent Fields — poster</text>
             </svg>
           </div>
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white">Lachlan Hitchcock</h2>
-            <p className="text-gray-300 mt-1 max-w-xl">Filmmaker — focusing on intimate, character-led short films exploring fear, identity and fragile courage.</p>
-            <div className="mt-4 flex gap-3">
-              <a href="#projects" className="px-4 py-2 bg-white text-black rounded shadow">View Projects</a>
-              <a href="https://www.youtube.com/" target="_blank" rel="noreferrer" className="px-4 py-2 border border-white/20 rounded text-white">YouTube Channel</a>
+
+          <div style="flex:1;">
+            <h3 id="p-silent-fields">Silent Fields <span class="badge" style="margin-left:8px">2025 • 16 min</span></h3>
+            <div class="meta">Writer & Director</div>
+            <p class="desc">A German deserter in World War II deserts because he is afraid to fight and faces the consequences as he finds himself next in line to be executed.</p>
+
+            <div class="actions">
+              <button class="btn" data-yid="REPLACE_YOUTUBE_ID_1" onclick="openTrailer(this)">Watch Trailer</button>
+              <a class="badge" href="#" onclick="event.preventDefault()">Festival screenings</a>
+              <span style="margin-left:auto;color:var(--muted);font-size:13px">Runtime: 16 min</span>
             </div>
           </div>
-        </div>
-      </Container>
-    </div>
-  </section>
-);
+        </article>
 
-const ProjectCard = ({ project }) => (
-  <article className="flex flex-col md:flex-row gap-6 bg-black/60 p-6 rounded-lg border border-white/5">
-    <div className="w-full md:w-1/3 flex-shrink-0">
-      <img src={project.poster} alt={`${project.title} poster`} className="w-full h-56 md:h-64 object-cover rounded" />
-    </div>
-    <div className="flex-1">
-      <h3 className="text-xl font-semibold text-white">{project.title} <span className="text-sm text-gray-400">({project.year})</span></h3>
-      <p className="text-sm text-gray-300 mt-2">{project.synopsis}</p>
-      <div className="mt-4 flex items-center gap-3">
-        <a href={project.trailer} target="_blank" rel="noreferrer" className="px-3 py-2 bg-red-600 rounded text-white text-sm">Watch Trailer</a>
-        <span className="text-sm text-gray-400">{project.runtime}</span>
+        <!-- Project 2 -->
+        <article class="card" aria-labelledby="p-paper-shoes">
+          <div class="poster" aria-hidden="true">
+            <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+              <rect width="100%" height="100%" fill="#08121a"/>
+              <text x="50%" y="50%" text-anchor="middle" font-size="20" fill="#9aa0a6">Paper Shoes — poster</text>
+            </svg>
+          </div>
+
+          <div style="flex:1;">
+            <h3 id="p-paper-shoes">Paper Shoes <span class="badge" style="margin-left:8px">2024 • 12 min</span></h3>
+            <div class="meta">Writer & Director</div>
+            <p class="desc">A teenage boy navigates depression and fragile steps toward a faint light at the end of a hard path — a quiet study of small acts of courage.</p>
+
+            <div class="actions">
+              <button class="btn" data-yid="REPLACE_YOUTUBE_ID_2" onclick="openTrailer(this)">Watch Trailer</button>
+              <a class="badge" href="#" onclick="event.preventDefault()">Press kit</a>
+              <span style="margin-left:auto;color:var(--muted);font-size:13px">Runtime: 12 min</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Add more projects here — copy a .card block and update fields -->
       </div>
-    </div>
-  </article>
-);
+    </section>
 
-const ProjectsSection = () => (
-  <section id="projects" className="py-12">
-    <Container>
-      <h2 className="text-2xl font-bold text-white mb-4">Selected Projects</h2>
-      <div className="grid gap-6">
-        {PROJECTS.map(p => <ProjectCard project={p} key={p.id} />)}
-      </div>
-    </Container>
-  </section>
-);
+    <!-- About & Press -->
+    <section id="about" class="wrap">
+      <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;">
+        <div style="flex:1;min-width:260px">
+          <h2 class="section-title">About</h2>
+          <p style="color:var(--muted);margin-top:8px">
+            Lachlan Hitchcock is an emerging filmmaker focusing on intimate, character-led stories. His films examine fear, identity and moral fragility with a spare visual language and careful performances.
+          </p>
 
-const AboutSection = () => (
-  <section id="about" className="py-12 border-t border-white/5">
-    <Container>
-      <div className="grid md:grid-cols-3 gap-8 items-start">
-        <div className="md:col-span-2">
-          <h2 className="text-2xl font-bold text-white">About</h2>
-          <p className="text-gray-300 mt-4 leading-relaxed">Lachlan Hitchcock is an emerging filmmaker exploring human vulnerability through intimate storytelling. His work focuses on characters at moments of moral conflict and emotional fracture. His short films have screened at festivals and are noted for their spare visual style, careful performances and quiet tension.</p>
-
-          <h3 className="text-lg font-semibold text-white mt-6">Skills & Roles</h3>
-          <ul className="text-gray-300 mt-2 list-disc list-inside">
+          <h3 style="color:#fff;margin-top:14px;margin-bottom:6px">Roles & Skills</h3>
+          <ul style="color:var(--muted);margin:0;padding-left:20px">
             <li>Writer / Director</li>
             <li>Editor</li>
-            <li>Cinematography collaboration</li>
-            <li>Short film & festival strategy</li>
+            <li>Short-film production & festival strategy</li>
+            <li>Collaborative cinematography</li>
           </ul>
         </div>
 
-        <aside className="bg-black/50 p-4 rounded border border-white/5">
-          <h4 className="text-white font-semibold">Quick Facts</h4>
-          <dl className="text-gray-300 mt-2">
-            <div className="flex justify-between"><dt>Location</dt><dd>Brisbane, Australia</dd></div>
-            <div className="flex justify-between mt-1"><dt>Availability</dt><dd>Festival submissions / Collaborations</dd></div>
-            <div className="flex justify-between mt-1"><dt>Email</dt><dd>lachlan@example.com</dd></div>
-          </dl>
+        <aside class="panel" style="width:300px;min-width:220px">
+          <strong style="display:block;color:#fff">Quick Facts</strong>
+          <div style="color:var(--muted);margin-top:8px;font-size:14px">
+            <div><strong>Location:</strong> Brisbane, Australia</div>
+            <div style="margin-top:6px"><strong>Availability:</strong> Festival submissions / collaborations</div>
+            <div style="margin-top:6px"><strong>Email:</strong> <a href="mailto:lachlan@example.com" style="color:var(--accent);text-decoration:none">lachlan@example.com</a></div>
+          </div>
         </aside>
       </div>
-    </Container>
-  </section>
-);
 
-const PressSection = () => (
-  <section id="press" className="py-12 border-t border-white/5">
-    <Container>
-      <h2 className="text-2xl font-bold text-white">Press & Awards</h2>
-      <p className="text-gray-300 mt-4">No press listed yet — add festival selections, awards, reviews, or embed quotes here to boost credibility.</p>
-    </Container>
-  </section>
-);
+      <div id="press" style="margin-top:26px">
+        <h2 class="section-title">Press & Awards</h2>
+        <p style="color:var(--muted);margin-top:8px">No press entries yet — add festival selections, awards or reviews here to boost credibility. Example entries: festival name, award, year, short quote.</p>
+      </div>
+    </section>
 
-const ContactSection = () => (
-  <section id="contact" className="py-12 border-t border-white/5">
-    <Container>
-      <h2 className="text-2xl font-bold text-white">Contact</h2>
-      <div className="mt-4 grid md:grid-cols-2 gap-6">
+    <!-- Contact -->
+    <section id="contact" class="wrap contact">
+      <h2 class="section-title">Contact</h2>
+
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;margin-top:12px;">
         <div>
-          <p className="text-gray-300">For inquiries, collaborations, festival submissions, or press, email:</p>
-          <p className="mt-4 font-semibold text-white">lachlan@example.com</p>
-          <p className="text-gray-400 mt-2">Or use the contact form to send a message directly.</p>
+          <p style="color:var(--muted)">For inquiries, collaborations, festival submissions or press, email <strong style="color:var(--accent)">lachlan@example.com</strong> or use the form.</p>
+
+          <p style="color:var(--muted)">If you want form submissions to arrive in your inbox without server code, use a free form processor such as Formspree or Getform. Replace the form action below with the endpoint they give you.</p>
         </div>
 
-        <div>
-          <form className="bg-black/60 p-4 rounded">
-            <label className="block text-sm text-gray-300">Name</label>
-            <input className="w-full mt-1 p-2 rounded bg-black/40 border border-white/5 text-white" />
+        <div class="panel">
+          <form id="contactForm" onsubmit="submitContact(event)" action="mailto:lachlan@example.com" method="post" enctype="text/plain">
+            <label style="display:block;color:var(--muted);font-size:13px">Your name</label>
+            <input type="text" name="name" required placeholder="Your name" />
 
-            <label className="block text-sm text-gray-300 mt-3">Email</label>
-            <input className="w-full mt-1 p-2 rounded bg-black/40 border border-white/5 text-white" />
+            <label style="display:block;color:var(--muted);font-size:13px;margin-top:10px">Email</label>
+            <input type="email" name="email" required placeholder="you@example.com" />
 
-            <label className="block text-sm text-gray-300 mt-3">Message</label>
-            <textarea className="w-full mt-1 p-2 rounded bg-black/40 border border-white/5 text-white" rows="4" />
+            <label style="display:block;color:var(--muted);font-size:13px;margin-top:10px">Message</label>
+            <textarea name="message" rows="5" placeholder="Hi Lachlan — I'd like to talk about..." required></textarea>
 
-            <div className="mt-3">
-              <button type="button" className="px-4 py-2 bg-white text-black rounded">Send Message</button>
+            <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+              <button class="btn btn-cta" type="submit" style="border:0">Send message</button>
+              <button type="button" class="btn" onclick="window.location='mailto:lachlan@example.com'">Email directly</button>
             </div>
+            <small style="display:block;margin-top:8px;color:var(--muted)">The demo form uses a mailto fallback. For reliable delivery use Formspree / Getform / Netlify Forms.</small>
           </form>
         </div>
       </div>
-    </Container>
-  </section>
-);
+    </section>
 
-const Footer = () => (
-  <footer className="py-8 text-center text-gray-400 border-t border-white/5">
-    <Container>
-      <p>© {new Date().getFullYear()} Lachlan Hitchcock Film — All rights reserved.</p>
-      <p className="mt-2 text-sm">Designed for festival submissions • Built with React + Tailwind</p>
-    </Container>
-  </footer>
-);
+    <footer class="wrap">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div style="color:var(--muted)">© <span id="year"></span> Lachlan Hitchcock Film — All rights reserved.</div>
+        <div style="color:var(--muted);font-size:13px">Designed for festival submissions • Static HTML • GitHub Pages ready</div>
+      </div>
+    </footer>
+  </main>
 
-export default function App() {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-black to-slate-900 text-white font-sans">
-      <Header />
-      <main>
-        <YouTubeBanner />
-        <ProjectsSection />
-        <AboutSection />
-        <PressSection />
-        <ContactSection />
-      </main>
-      <Footer />
+  <!-- Modal for trailers -->
+  <div id="modal" class="modal-backdrop" onclick="closeModal(event)">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Trailer">
+      <button class="modal-close" onclick="closeModal(event)">✕</button>
+      <div class="frame" style="position:relative;">
+        <div class="frame-inner" style="position:absolute;inset:0;background:#000">
+          <iframe id="ytframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
     </div>
-  );
-}
+  </div>
 
-/*
-README / Deployment to GitHub Pages (quick guide)
-1) Create a GitHub repo (e.g., lachlan-hitchcock-film). Commit your Vite project.
-2) Install the gh-pages package if using a static build flow for GitHub Pages (optional):
-   npm install --save-dev gh-pages
-3) Build the site for production: npm run build
-4) In GitHub repo settings -> Pages, serve from 'gh-pages' branch or from the 'docs' folder on main.
-   Alternatively, use GitHub Actions or Netlify for a cleaner deploy experience.
+  <!-- Scripts -->
+  <script>
+    // set year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-Notes / Next steps:
-- Replace poster placeholders under /public/assets/ (or /assets/) with your high-resolution images.
-- Replace trailer links with real YouTube watch URLs.
-- Update contact email and social links.
-- For the YouTube banner: design a 2560×1440 px image where the central 1546×423 area contains the critical text and logo so it appears on all devices.
-- If you want, I can also generate a banner and square avatar image as downloadable PNGs sized for YouTube.
-*/
+    // Open trailer modal — expects a YouTube ID (not full URL)
+    function openTrailer(el){
+      var youTubeId = el.getAttribute('data-yid') || '';
+      if(!youTubeId || youTubeId.indexOf('REPLACE')===0){
+        alert('Trailer ID placeholder — replace the data-yid on this button with your YouTube video ID (e.g. XyZ123abc).');
+        return;
+      }
+      var src = 'https://www.youtube.com/embed/' + encodeURIComponent(youTubeId) + '?autoplay=1&rel=0';
+      document.getElementById('ytframe').src = src;
+      var modal = document.getElementById('modal');
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal(e){
+      // allow click on backdrop or close button
+      if(e && e.target !== e.currentTarget && e.target.className !== 'modal-close') return;
+      document.getElementById('modal').style.display = 'none';
+      document.getElementById('ytframe').src = '';
+      document.body.style.overflow = '';
+    }
+
+    function submitContact(e){
+      // demo: let native mailto work / fallback shown to user.
+      // You can wire this to Formspree or another provider: change the form.action accordingly.
+      // Prevent the default to allow mailto behavior in some browsers; keep basic validation.
+      // If you integrate Formspree, remove this handler.
+      // (This keeps everything static HTML-only.)
+    }
+  </script>
+</body>
+</html>
