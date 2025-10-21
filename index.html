@@ -1,129 +1,242 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lachlan.H Films</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
-        }
+// Lachlan Hitchcock Film — Single-file React app (Tailwind CSS)
+// ----------------------------------------------------------------
+// How to use:
+// 1) Create a new Vite React app (recommended):
+//    npm create vite@latest lachlan-site -- --template react
+//    cd lachlan-site
+// 2) Install Tailwind (follow Tailwind + Vite instructions):
+//    npm install -D tailwindcss postcss autoprefixer && npx tailwindcss init -p
+//    // tailwind.config.cjs -> content: ['./index.html','./src/**/*.{js,jsx,ts,tsx}']
+//    // ./src/index.css -> add @tailwind base; @tailwind components; @tailwind utilities;
+// 3) Replace src/App.jsx with the contents of this file and add the assets folder.
+// 4) Run: npm install && npm run dev
+// 5) To deploy to GitHub Pages, see the README section at the bottom of this file.
 
-        header {
-            background: #0078d7;
-            color: #fff;
-            padding: 1rem 0;
-            text-align: center;
-        }
+import React from 'react';
 
-            header h1 {
-                margin: 0;
-            }
+// ---------- Sample data (edit with your real project info) ----------
+const PROJECTS = [
+  {
+    id: 'silent-fields',
+    title: 'Silent Fields',
+    year: 2025,
+    runtime: '16 min',
+    poster: '/assets/silent-fields.jpg',
+    synopsis:
+      'A German deserter in World War II deserts because he is afraid to fight and faces the consequences as he finds himself next in line to be executed.',
+    trailer: 'https://www.youtube.com/watch?v=REPLACE_WITH_ID'
+  },
+  {
+    id: 'paper-shoes',
+    title: 'Paper Shoes',
+    year: 2024,
+    runtime: '12 min',
+    poster: '/assets/paper-shoes.jpg',
+    synopsis:
+      'A teenage boy struggling with depression navigates fragile steps toward a faint light at the end of a long path.',
+    trailer: 'https://www.youtube.com/watch?v=REPLACE_WITH_ID'
+  }
+];
 
-        nav {
-            margin-top: 1rem;
-        }
+// ----------------- Small utility components -----------------
+const Container = ({ children }) => (
+  <div className="max-w-6xl mx-auto px-6 py-12">{children}</div>
+);
 
-            nav a {
-                color: #fff;
-                text-decoration: none;
-                margin: 0 10px;
-            }
+const Header = () => (
+  <header className="bg-black/80 backdrop-blur sticky top-0 z-40">
+    <Container>
+      <div className="flex items-center justify-between py-4">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 flex items-center justify-center rounded-full overflow-hidden bg-gray-800">
+            {/* Avatar placeholder (replace with your image) */}
+            <svg viewBox="0 0 256 256" className="w-full h-full">
+              <rect width="256" height="256" fill="#0f172a" />
+              <text x="50%" y="55%" dominantBaseline="middle" textAnchor="middle" fontSize="72" fill="#e6e7e8">LH</text>
+            </svg>
+          </div>
+          <div>
+            <h1 className="text-white font-semibold">Lachlan Hitchcock Film</h1>
+            <p className="text-sm text-gray-300">Writer | Director | Editor</p>
+          </div>
+        </div>
 
-                nav a:hover {
-                    text-decoration: underline;
-                }
-
-        .container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 1rem;
-            background: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .portrait {
-            text-align: center;
-        }
-
-            .portrait img {
-                width: 150px;
-                height: 150px;
-                border-radius: 50%;
-                border: 3px solid #0078d7;
-            }
-
-        .section {
-            margin-bottom: 2rem;
-        }
-
-            .section h2 {
-                color: #0078d7;
-            }
-
-        footer {
-            background: #333;
-            color: #fff;
-            text-align: center;
-            padding: 1rem 0;
-            margin-top: 2rem;
-        }
-
-            footer p {
-                margin: 0;
-            }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Lachlan.H Films</h1>
         <nav>
-            <a href="#about">About Me</a>
-            <a href="#information">Information</a>
-            <a href="#contact">Contact</a>
+          <ul className="flex gap-6 text-gray-200">
+            <li><a href="#projects" className="hover:text-white">Projects</a></li>
+            <li><a href="#about" className="hover:text-white">About</a></li>
+            <li><a href="#press" className="hover:text-white">Press</a></li>
+            <li><a href="#contact" className="hover:text-white">Contact</a></li>
+          </ul>
         </nav>
-    </header>
+      </div>
+    </Container>
+  </header>
+);
 
-    <div class="container">
-        <div class="portrait">
-            <img src="portrait.png" alt="Your Portrait">
+const YouTubeBanner = () => (
+  <section className="relative">
+    {/* Banner area sized for YouTube: background will crop responsively; ensure main content stays inside safe area (1546 x 423 centered in 2560 x 1440). */}
+    <div className="h-64 md:h-96 bg-gradient-to-r from-gray-900 via-slate-800 to-black flex items-center">
+      <Container>
+        <div className="flex items-center gap-6">
+          <div className="w-40 h-40 md:w-56 md:h-56 rounded-lg overflow-hidden shadow-2xl border border-white/10">
+            {/* Replace this SVG with your profile image (square). Recommended size: 800x800. */}
+            <svg viewBox="0 0 200 200" className="w-full h-full">
+              <rect width="200" height="200" fill="#0b1220" />
+              <text x="50%" y="55%" dominantBaseline="middle" textAnchor="middle" fontSize="56" fill="#e6e7e8">LH</text>
+            </svg>
+          </div>
+          <div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white">Lachlan Hitchcock</h2>
+            <p className="text-gray-300 mt-1 max-w-xl">Filmmaker — focusing on intimate, character-led short films exploring fear, identity and fragile courage.</p>
+            <div className="mt-4 flex gap-3">
+              <a href="#projects" className="px-4 py-2 bg-white text-black rounded shadow">View Projects</a>
+              <a href="https://www.youtube.com/" target="_blank" rel="noreferrer" className="px-4 py-2 border border-white/20 rounded text-white">YouTube Channel</a>
+            </div>
+          </div>
         </div>
-
-        <div class="section" id="about">
-            <h2>About Me</h2>
-            <p>
-                Welcome! I am Lachlan, a passionate filmmaker and video editor with a keen eye for detail and a strong dedication to crafting 
-                compelling stories and visuals that captivate audiences. My expertise spans across every stage of the creative process, from 
-                conceptualizing ideas to editing and delivering polished final products. Whether it’s a cinematic short film, a dynamic commercial
-                , or a visually engaging montage, I strive to bring a unique artistic vision to every project I undertake. Collaboration and storytelling
-                are at the heart of my work, ensuring each piece resonates deeply with its intended audience.
-            </p>
-        </div>
-
-        <div class="section" id="information">
-            <h2>Information</h2>
-            <p>
-                I specialize in video editing, cinematography, and storytelling, combining technical skill and creative vision to produce visually 
-                striking and emotionally impactful content. From crafting seamless edits to designing compelling shots, I focus on bringing stories 
-                to life in a way that captivates and resonates with audiences.
-            </p>
-        </div>
-
-        <div class="section" id="contact">
-            <h2>Contact</h2>
-            <p>
-                Feel free to reach out to me for any inquiry via email at <a href="mailto:lachlanhitchcockfilm@gmail.com">lachlanhitchcockfilm@gmail.com</a>.
-            </p>
-        </div>
+      </Container>
     </div>
+  </section>
+);
 
-    <footer>
-        <p>&copy; 2024 Lachlan Hitchcock All Rights Reserved.</p>
-    </footer>
-</body>
-</html>
+const ProjectCard = ({ project }) => (
+  <article className="flex flex-col md:flex-row gap-6 bg-black/60 p-6 rounded-lg border border-white/5">
+    <div className="w-full md:w-1/3 flex-shrink-0">
+      <img src={project.poster} alt={`${project.title} poster`} className="w-full h-56 md:h-64 object-cover rounded" />
+    </div>
+    <div className="flex-1">
+      <h3 className="text-xl font-semibold text-white">{project.title} <span className="text-sm text-gray-400">({project.year})</span></h3>
+      <p className="text-sm text-gray-300 mt-2">{project.synopsis}</p>
+      <div className="mt-4 flex items-center gap-3">
+        <a href={project.trailer} target="_blank" rel="noreferrer" className="px-3 py-2 bg-red-600 rounded text-white text-sm">Watch Trailer</a>
+        <span className="text-sm text-gray-400">{project.runtime}</span>
+      </div>
+    </div>
+  </article>
+);
+
+const ProjectsSection = () => (
+  <section id="projects" className="py-12">
+    <Container>
+      <h2 className="text-2xl font-bold text-white mb-4">Selected Projects</h2>
+      <div className="grid gap-6">
+        {PROJECTS.map(p => <ProjectCard project={p} key={p.id} />)}
+      </div>
+    </Container>
+  </section>
+);
+
+const AboutSection = () => (
+  <section id="about" className="py-12 border-t border-white/5">
+    <Container>
+      <div className="grid md:grid-cols-3 gap-8 items-start">
+        <div className="md:col-span-2">
+          <h2 className="text-2xl font-bold text-white">About</h2>
+          <p className="text-gray-300 mt-4 leading-relaxed">Lachlan Hitchcock is an emerging filmmaker exploring human vulnerability through intimate storytelling. His work focuses on characters at moments of moral conflict and emotional fracture. His short films have screened at festivals and are noted for their spare visual style, careful performances and quiet tension.</p>
+
+          <h3 className="text-lg font-semibold text-white mt-6">Skills & Roles</h3>
+          <ul className="text-gray-300 mt-2 list-disc list-inside">
+            <li>Writer / Director</li>
+            <li>Editor</li>
+            <li>Cinematography collaboration</li>
+            <li>Short film & festival strategy</li>
+          </ul>
+        </div>
+
+        <aside className="bg-black/50 p-4 rounded border border-white/5">
+          <h4 className="text-white font-semibold">Quick Facts</h4>
+          <dl className="text-gray-300 mt-2">
+            <div className="flex justify-between"><dt>Location</dt><dd>Brisbane, Australia</dd></div>
+            <div className="flex justify-between mt-1"><dt>Availability</dt><dd>Festival submissions / Collaborations</dd></div>
+            <div className="flex justify-between mt-1"><dt>Email</dt><dd>lachlan@example.com</dd></div>
+          </dl>
+        </aside>
+      </div>
+    </Container>
+  </section>
+);
+
+const PressSection = () => (
+  <section id="press" className="py-12 border-t border-white/5">
+    <Container>
+      <h2 className="text-2xl font-bold text-white">Press & Awards</h2>
+      <p className="text-gray-300 mt-4">No press listed yet — add festival selections, awards, reviews, or embed quotes here to boost credibility.</p>
+    </Container>
+  </section>
+);
+
+const ContactSection = () => (
+  <section id="contact" className="py-12 border-t border-white/5">
+    <Container>
+      <h2 className="text-2xl font-bold text-white">Contact</h2>
+      <div className="mt-4 grid md:grid-cols-2 gap-6">
+        <div>
+          <p className="text-gray-300">For inquiries, collaborations, festival submissions, or press, email:</p>
+          <p className="mt-4 font-semibold text-white">lachlan@example.com</p>
+          <p className="text-gray-400 mt-2">Or use the contact form to send a message directly.</p>
+        </div>
+
+        <div>
+          <form className="bg-black/60 p-4 rounded">
+            <label className="block text-sm text-gray-300">Name</label>
+            <input className="w-full mt-1 p-2 rounded bg-black/40 border border-white/5 text-white" />
+
+            <label className="block text-sm text-gray-300 mt-3">Email</label>
+            <input className="w-full mt-1 p-2 rounded bg-black/40 border border-white/5 text-white" />
+
+            <label className="block text-sm text-gray-300 mt-3">Message</label>
+            <textarea className="w-full mt-1 p-2 rounded bg-black/40 border border-white/5 text-white" rows="4" />
+
+            <div className="mt-3">
+              <button type="button" className="px-4 py-2 bg-white text-black rounded">Send Message</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </Container>
+  </section>
+);
+
+const Footer = () => (
+  <footer className="py-8 text-center text-gray-400 border-t border-white/5">
+    <Container>
+      <p>© {new Date().getFullYear()} Lachlan Hitchcock Film — All rights reserved.</p>
+      <p className="mt-2 text-sm">Designed for festival submissions • Built with React + Tailwind</p>
+    </Container>
+  </footer>
+);
+
+export default function App() {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-black to-slate-900 text-white font-sans">
+      <Header />
+      <main>
+        <YouTubeBanner />
+        <ProjectsSection />
+        <AboutSection />
+        <PressSection />
+        <ContactSection />
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+/*
+README / Deployment to GitHub Pages (quick guide)
+1) Create a GitHub repo (e.g., lachlan-hitchcock-film). Commit your Vite project.
+2) Install the gh-pages package if using a static build flow for GitHub Pages (optional):
+   npm install --save-dev gh-pages
+3) Build the site for production: npm run build
+4) In GitHub repo settings -> Pages, serve from 'gh-pages' branch or from the 'docs' folder on main.
+   Alternatively, use GitHub Actions or Netlify for a cleaner deploy experience.
+
+Notes / Next steps:
+- Replace poster placeholders under /public/assets/ (or /assets/) with your high-resolution images.
+- Replace trailer links with real YouTube watch URLs.
+- Update contact email and social links.
+- For the YouTube banner: design a 2560×1440 px image where the central 1546×423 area contains the critical text and logo so it appears on all devices.
+- If you want, I can also generate a banner and square avatar image as downloadable PNGs sized for YouTube.
+*/
